@@ -114,7 +114,7 @@ for(Car car : result){
             Car finalCar = car.get();
             finalCar.setReservationRate(finalCar.getReservationRate()+1);
             reservation.setCar(finalCar);
-
+            carRepository.save(finalCar);
             Optional<Customer> customer = customerRepository.findByEmail(request.getEmail());
             Customer finalCustomer = customer.get();
             reservation.setCustomer(finalCustomer);
