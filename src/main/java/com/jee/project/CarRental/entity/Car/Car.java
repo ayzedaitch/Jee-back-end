@@ -1,5 +1,6 @@
 package com.jee.project.CarRental.entity.Car;
 
+import com.jee.project.CarRental.entity.Reservation;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,4 +20,7 @@ public class Car {
     Double price;
     Long reservationRate;
     String Category;
+
+    @OneToOne(mappedBy = "car")
+    Reservation reservation;
 }

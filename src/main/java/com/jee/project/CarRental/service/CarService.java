@@ -1,8 +1,14 @@
 package com.jee.project.CarRental.service;
 
+import com.jee.project.CarRental.entity.Car.BookingRequest;
 import com.jee.project.CarRental.entity.Car.Car;
 import com.jee.project.CarRental.entity.Car.FilterRequest;
+import com.jee.project.CarRental.entity.Car.FilterResponse;
+import com.jee.project.CarRental.entity.Customer;
+import com.jee.project.CarRental.entity.Reservation;
 import com.jee.project.CarRental.repository.CarRepository;
+import com.jee.project.CarRental.repository.CustomerRepository;
+import com.jee.project.CarRental.repository.ReservationRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,19 +16,40 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CarService {
     @Autowired
     CarRepository carRepository;
 
-    public List<Car> TopRatedCars(){
-        return carRepository.findFirst8ByOrderByReservationRateDesc();
+    @Autowired
+    ReservationRepo reservationRepo;
+
+    @Autowired
+    CustomerRepository customerRepository;
+    public List<FilterResponse> TopRatedCars(){
+        List<FilterResponse> responses = new ArrayList<>();
+        for(Car car : carRepository.findFirst6ByOrderByReservationRateDesc()){
+            FilterResponse response = new FilterResponse(
+                    car.getId(),
+                    car.getTitle(),
+                    car.getDescription(),
+                    car.getImageUrl(),
+                    car.getPrice(),
+                    car.getReservationRate()
+            );
+            responses.add(response);
+        }
+        return  responses;
     }
 
-    public List<Car> getCars(FilterRequest request) {
+    public List<FilterResponse> getCars(FilterRequest request) {
         String category;
         List<Car> result = new ArrayList<>();
 
@@ -57,7 +84,52 @@ public class CarService {
         }else {
             result = carRepository.filterCarsDefault(category);
         }
+        List<FilterResponse> responses = new ArrayList<>();
+for(Car car : result){
+    FilterResponse response = new FilterResponse(
+            car.getId(),
+            car.getTitle(),
+            car.getDescription(),
+            car.getImageUrl(),
+            car.getPrice(),
+            car.getReservationRate()
+    );
+    responses.add(response);
+}
+       return  responses;
+    }
 
-       return  result;
+    public void bookCar(BookingRequest request){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date pickupdate = dateFormat.parse(request.getPickUpDate());
+            Date dropoffdate = dateFormat.parse(request.getDropOffDate());
+            Reservation reservation = new Reservation();
+            reservation.setLocalisation(request.getAdress());
+            reservation.setPickUpDate(pickupdate);
+            reservation.setDropOffDate(dropoffdate);
+
+
+            Optional<Car> car = carRepository.findById(request.getId());
+            Car finalCar = car.get();
+            finalCar.setReservationRate(finalCar.getReservationRate()+1);
+            reservation.setCar(finalCar);
+
+            Optional<Customer> customer = customerRepository.findByEmail(request.getEmail());
+            Customer finalCustomer = customer.get();
+            reservation.setCustomer(finalCustomer);
+
+            reservationRepo.save(reservation);
+
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Car getCar(Long id){
+        Optional<Car> car = carRepository.findById(id);
+        Car finalCar = car.get();
+        return finalCar;
     }
 }

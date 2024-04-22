@@ -11,7 +11,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface CarRepository extends JpaRepository<Car,Long> {
-    List<Car> findFirst8ByOrderByReservationRateDesc();
+    List<Car> findFirst6ByOrderByReservationRateDesc();
+
     @Query("SELECT DISTINCT c FROM Car c  WHERE :category IS NULL OR c.Category = :category")
     List<Car> filterCars(
             @Param("category") String category,
