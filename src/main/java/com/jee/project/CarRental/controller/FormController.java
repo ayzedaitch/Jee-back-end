@@ -125,5 +125,46 @@ public class FormController {
         }
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestParam("refresh_token") String refresh){
+        String url = "http://localhost:8080/realms/JEE/protocol/openid-connect/logout";
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        // Create your form data as a Map
+        Map<String, String> formData = new HashMap<>();
+        formData.put("client_id", "jee-presentation");
+        formData.put("client_secret", keycloakSecret);
+        formData.put("refresh_token",refresh);
+
+        // Create the request body
+        StringBuilder requestBody = new StringBuilder();
+        for (Map.Entry<String, String> entry : formData.entrySet()) {
+            // entry === key-value pair
+            requestBody.append(entry.getKey());
+            requestBody.append("=");
+            requestBody.append(entry.getValue());
+            requestBody.append("&");
+        }
+
+        // Remove the last "&" character
+        requestBody.deleteCharAt(requestBody.length() - 1);
+
+        HttpEntity<String> request = new HttpEntity<>(requestBody.toString(), headers);
+
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                return ResponseEntity.ok(response.getBody());
+            } else {
+                throw new RuntimeException("Error");
+            }
+        } catch (Exception e ){
+            return ResponseEntity.ok(e.getMessage());
+        }
+    }
+
 
 }

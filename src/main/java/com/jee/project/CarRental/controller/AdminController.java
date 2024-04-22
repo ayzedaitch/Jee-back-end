@@ -26,21 +26,16 @@ public class AdminController {
         try {
             List<Reservation> reservationList = reservationRepo.findAll();
             List<Map<String, Object>> response = new ArrayList<>();
-//            for (Reservation r:
-//                 reservationList) {
+            for (Reservation r:
+                 reservationList) {
                 Map<String, Object> responseData = new HashMap<>();
-//                responseData.put("car", r.getCar().getTitle());
-//                responseData.put("customer", r.getCustomer().getFirstName()+" "+r.getCustomer().getLastName());
-//                responseData.put("email", r.getCustomer().getEmail());
-//                responseData.put("pick", r.getPickUpDate());
-//                responseData.put("drop", r.getDropOffDate());
-                responseData.put("car", "car");
-                responseData.put("customer", "cus");
-                responseData.put("email", "email");
-                responseData.put("pick", new Date());
-                responseData.put("drop", new Date());
-                response.add(responseData);
-//            }
+                responseData.put("car", r.getCar().getTitle());
+                responseData.put("customer", r.getCustomer().getFirstName()+" "+r.getCustomer().getLastName());
+                responseData.put("email", r.getCustomer().getEmail());
+                responseData.put("pick", r.getPickUpDate());
+                responseData.put("drop", r.getDropOffDate());
+
+            }
             return ResponseEntity.ok(response);
         } catch (Exception e){
             return ResponseEntity.internalServerError().build();
@@ -53,11 +48,7 @@ public class AdminController {
                           @RequestParam("description") String description,
                           @RequestParam("price") double price,
                           @RequestParam("category") String category) throws IOException {
-        String path = System.getProperty("user.dir") + File.separator + "CarRentalImages";
-        File folder = new File(path);
-        if (!folder.exists()) {
-            folder.mkdir();
-        }
+        String path = "D:\\Jee-front-end\\public";
         String uniqueFileName = System.currentTimeMillis() + "-" + image.getOriginalFilename();
         String savingPath = path + File.separator + uniqueFileName;
 
@@ -68,9 +59,39 @@ public class AdminController {
                         .description(description)
                         .price(price)
                         .Category(category)
-                        .imageUrl(savingPath)
+                        .imageUrl(uniqueFileName)
                         .build());
 
         return ResponseEntity.ok("OK");
     }
+
+    @PutMapping("/edit/{id}")
+    public String editCars(@RequestBody Car carReq, @PathVariable Long id){
+        Car car = carRepository.findById(id).get();
+        car.setCategory(carReq.getCategory());
+        car.setPrice(carReq.getPrice());
+        car.setDescription(carReq.getDescription());
+        car.setTitle(carReq.getTitle());
+
+        carRepository.save(car);
+
+        return "car edited";
+    }
+
+    @GetMapping("/getcars")
+    public List<Car> getCars(){
+        return carRepository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public Car getCar(@PathVariable Long id){
+        return carRepository.findById(id).get();
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public String deleteCar(@PathVariable Long id){
+        carRepository.deleteById(id);
+        return "car deleted";
+    }
+
 }
