@@ -25,4 +25,4 @@ server:
 
 keycloak:
   client:
-    secret: TGwVWek1wTcEycfWVTwTf1ZCGyp7umdZ
+    secret: cEoCU6HchVyxHZP1MhSL8PpmThtWslms
