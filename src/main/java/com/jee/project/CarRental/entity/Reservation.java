@@ -1,6 +1,7 @@
 package com.jee.project.CarRental.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.jee.project.CarRental.entity.Car.Car;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class Reservation {
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
+    @JsonBackReference
     Customer customer;
 
     @OneToOne

@@ -1,5 +1,6 @@
 package com.jee.project.CarRental.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jee.project.CarRental.entity.Car.Car;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,7 @@ public class Customer {
     private String password;
 
     @OneToMany(mappedBy = "customer")
+    @JsonManagedReference
     List<Reservation>  reservations = new ArrayList<>();
 
 }
