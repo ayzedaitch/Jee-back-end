@@ -27,9 +27,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(req -> {
-//                    req.requestMatchers("api/v1/**").permitAll();
-//                    req.anyRequest().authenticated();
-                    req.anyRequest().permitAll();
+                    req.requestMatchers("api/v1/form/**").permitAll();
+                    req.requestMatchers("api/v1/topCars").permitAll();
+                    req.requestMatchers("api/v1/Car/**").permitAll();
+                    req.requestMatchers("api/v1/filterCars").permitAll();
+
+                    req.anyRequest().authenticated();
 
                 });
         http.oauth2ResourceServer(t ->

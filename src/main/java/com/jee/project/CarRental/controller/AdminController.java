@@ -6,6 +6,7 @@ import com.jee.project.CarRental.repository.CarRepository;
 import com.jee.project.CarRental.repository.ReservationRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,6 +18,7 @@ import java.util.*;
 @RequestMapping("api/v1/admin")
 @RequiredArgsConstructor
 @CrossOrigin("*")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
     private final ReservationRepo reservationRepo;
     private final CarRepository carRepository;
@@ -48,7 +50,7 @@ public class AdminController {
                           @RequestParam("description") String description,
                           @RequestParam("price") double price,
                           @RequestParam("category") String category) throws IOException {
-        String path = "C:\\Users\\PC\\Desktop\\jee proj\\jee-frontend\\public";
+        String path = "D:\\Jee-front-end\\public";
         String uniqueFileName = System.currentTimeMillis() + "-" + image.getOriginalFilename();
         String savingPath = path + File.separator + uniqueFileName;
 

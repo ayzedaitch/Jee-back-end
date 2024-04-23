@@ -21,6 +21,6 @@ public class Car {
     Long reservationRate;
     String Category;
 
-    @OneToOne(mappedBy = "car")
-    Reservation reservation;
+//    @OneToOne(mappedBy = "car")
+//    Reservation reservation;
 }
