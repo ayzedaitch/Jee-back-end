@@ -34,7 +34,7 @@ public class AdminController {
                 responseData.put("email", r.getCustomer().getEmail());
                 responseData.put("pick", r.getPickUpDate());
                 responseData.put("drop", r.getDropOffDate());
-
+                response.add(responseData);
             }
             return ResponseEntity.ok(response);
         } catch (Exception e){
@@ -48,7 +48,7 @@ public class AdminController {
                           @RequestParam("description") String description,
                           @RequestParam("price") double price,
                           @RequestParam("category") String category) throws IOException {
-        String path = "D:\\Jee-front-end\\public";
+        String path = "C:\\Users\\PC\\Desktop\\jee proj\\jee-frontend\\public";
         String uniqueFileName = System.currentTimeMillis() + "-" + image.getOriginalFilename();
         String savingPath = path + File.separator + uniqueFileName;
 
@@ -59,6 +59,7 @@ public class AdminController {
                         .description(description)
                         .price(price)
                         .Category(category)
+                        .reservationRate(0L)
                         .imageUrl(uniqueFileName)
                         .build());
 
